@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WrapShield AI — Food Packaging Recommendation Assistant</title>
+  <meta name="description" content="Smart packaging recommendations for food businesses powered by Gemini AI.">
+  <link rel="icon" type="image/jpeg" href="wrapshield-logo.jpg">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Status Banner (for backend connection status or alerts) -->
+  <div id="status-banner" class="status-banner hidden"></div>
+
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="logo-wrapper">
+        <img src="wrapshield-logo.jpg" alt="WrapShield AI Logo" class="brand-logo-img">
+        <div>
+          <h1 class="app-title">WrapShield AI</h1>
+          <p class="app-subtitle">Smart packaging recommendations for food businesses</p>
+        </div>
+      </div>
+      <div class="backend-indicator" id="backend-indicator" title="Backend connection status">
+        <span class="indicator-dot"></span>
+        <span class="indicator-text" id="indicator-text">Checking Backend...</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main class="main-container">
+    <div class="content-grid">
+
+      <!-- LEFT COLUMN: Food Input & Specification Form -->
+      <section class="card input-card" aria-labelledby="input-heading">
+        <div class="card-header">
+          <h2 id="input-heading" class="card-title">1. Food & Packaging Requirements</h2>
+          <p class="card-description">Upload a product photo or provide product specifics below.</p>
+        </div>
+
+        <form id="food-form" novalidate>
+          <!-- Image Upload Dropzone -->
+          <div class="form-group">
+            <label class="form-label" for="food-image">Product Image (Optional)</label>
+            <div class="image-dropzone" id="dropzone">
+              <input type="file" id="food-image" name="image" accept="image/png, image/jpeg, image/webp" class="file-input">
+              <div id="upload-prompt" class="upload-prompt">
+                <span class="upload-icon">📷</span>
+                <p class="upload-text"><strong>Click to upload</strong> or drag and drop image</p>
+                <p class="upload-hint">PNG, JPG, or WEBP (Max 5MB)</p>
+              </div>
+              <!-- Image Preview Container -->
+              <div id="preview-container" class="preview-container hidden">
+                <img id="image-preview" src="" alt="Food Preview" class="image-preview">
+                <button type="button" id="remove-image-btn" class="btn-secondary btn-small" title="Remove photo">✕ Remove Photo</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Food Name Text Field -->
+          <div class="form-group">
+            <label class="form-label" for="food-name">Food Name / Description</label>
+            <input type="text" id="food-name" name="food_name" class="form-input" placeholder="e.g. Potato chips, Roasted cashews, Fresh bakery cookies">
+            <span class="form-hint">Enter the food name or let AI detect it from your photo.</span>
+          </div>
+
+          <!-- Desired Shelf-Life Field -->
+          <div class="form-group">
+            <label class="form-label" for="shelf-life">Desired Shelf-Life</label>
+            <input type="text" id="shelf-life" name="shelf_life" class="form-input" placeholder="e.g. 3 months, 6 months, 14 days" value="3 months">
+          </div>
+
+          <!-- Storage Condition Dropdown -->
+          <div class="form-group">
+            <label class="form-label" for="storage-condition">Storage Condition</label>
+            <select id="storage-condition" name="storage_condition" class="form-select">
+              <option value="Ambient room temperature (Dry & Cool)" selected>Ambient room temperature (Dry & Cool)</option>
+              <option value="High Humidity / Tropical Ambient">High Humidity / Tropical Ambient</option>
+              <option value="Refrigerated (2°C to 8°C)">Refrigerated (2°C to 8°C)</option>
+              <option value="Frozen (-18°C or below)">Frozen (-18°C or below)</option>
+              <option value="Direct Sun / Outdoor Stalls">Outdoor Stalls / Direct Ambient Exposure</option>
+            </select>
+          </div>
+
+          <!-- Transportation Condition Dropdown -->
+          <div class="form-group">
+            <label class="form-label" for="transport-condition">Transportation Condition</label>
+            <select id="transport-condition" name="transport_condition" class="form-select">
+              <option value="Standard Road & Courier Delivery" selected>Standard Road & Courier Delivery</option>
+              <option value="Cold Chain Transport (Chilled/Frozen)">Cold Chain Transport (Chilled/Frozen)</option>
+              <option value="Long Distance / Rough Freight Handling">Long Distance / Rough Freight Handling</option>
+              <option value="Local Direct Retail / Immediate Distribution">Local Direct Retail / Immediate Distribution</option>
+              <option value="Air / Export Cargo">Air / Export Cargo</option>
+            </select>
+          </div>
+
+          <!-- Budget Priority Dropdown -->
+          <div class="form-group">
+            <label class="form-label" for="budget-priority">Budget Priority</label>
+            <select id="budget-priority" name="budget_priority" class="form-select">
+              <option value="Balanced (Good barrier & moderate cost)" selected>Balanced (Standard Barrier & Moderate Cost)</option>
+              <option value="Economy (Lowest possible packaging unit cost)">Economy (Lowest Possible Unit Cost)</option>
+              <option value="Premium Protection (Maximum barrier & shelf-life)">Premium Protection (Maximum Barrier & Shelf Life)</option>
+              <option value="Eco-Friendly & Sustainable">Eco-Friendly & Sustainable Priority</option>
+            </select>
+          </div>
+
+          <!-- Form Action Button -->
+          <div class="form-actions">
+            <button type="submit" id="analyze-btn" class="btn btn-primary btn-block">
+              <span class="btn-text">⚡ Analyze Packaging</span>
+              <span class="spinner hidden" id="analyze-spinner"></span>
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- RIGHT COLUMN: Recommendation View & Interactive Consultation Chat -->
+      <div class="right-column">
+
+        <!-- Recommendation Section -->
+        <section class="card recommendation-card" id="recommendation-section" aria-labelledby="recommendation-heading">
+          <div class="card-header flex-between">
+            <div>
+              <h2 id="recommendation-heading" class="card-title">2. Packaging Recommendation</h2>
+              <p class="card-description">Simple, practical packaging advice for farmers & food businesses.</p>
+            </div>
+            <div class="header-actions" style="display: flex; gap: 8px; align-items: center;">
+              <span id="confidence-badge" class="badge badge-neutral">Awaiting Analysis</span>
+              <button type="button" id="clear-recom-btn" class="btn-secondary btn-small hidden" title="Clear this recommendation and start fresh">🔄 Clear & New</button>
+            </div>
+          </div>
+
+          <!-- Recommendation Empty State Placeholder -->
+          <div id="recommendation-placeholder" class="recommendation-placeholder">
+            <div class="placeholder-icon">📋</div>
+            <p class="placeholder-title">No recommendation generated yet</p>
+            <p class="placeholder-subtitle">Fill in the product details on the left or upload a photo, then click <strong>Analyze Packaging</strong> to see the best packet for your food.</p>
+          </div>
+
+          <!-- Recommendation Content (Populated dynamically) -->
+          <div id="recommendation-content" class="recommendation-content hidden">
+
+            <!-- Identified Food Header Banner -->
+            <div class="recom-banner">
+              <div class="recom-banner-item">
+                <span class="meta-label">Identified Food Product</span>
+                <h3 id="recom-food" class="meta-value">--</h3>
+              </div>
+              <div class="recom-banner-item">
+                <span class="meta-label">Estimated Shelf-Life (Stays Fresh For)</span>
+                <p id="recom-shelf-life" class="meta-value-accent">--</p>
+              </div>
+            </div>
+
+            <!-- Primary Recommended Material -->
+            <div class="recom-detail-box highlight-box">
+              <h4 class="box-title">🏆 Best Packet for Your Food (Recommended)</h4>
+              <p id="recom-material" class="box-primary-text">--</p>
+              <div class="structure-wrap">
+                <span class="box-subtitle">Packet Structure (Layers from outside to inside):</span>
+                <p id="recom-structure" class="structure-text">--</p>
+              </div>
+            </div>
+
+            <!-- Reason & Protection Needs -->
+            <div class="recom-detail-box">
+              <h4 class="box-title">💡 Why This Packet Works (Simple Explanation)</h4>
+              <p id="recom-reason" class="box-body-text">--</p>
+            </div>
+
+            <!-- Barrier Protection Matrix -->
+            <div class="barrier-matrix">
+              <h4 class="box-title">🛡️ Protection Levels Needed</h4>
+              <div class="barrier-grid">
+                <div class="barrier-card">
+                  <span class="barrier-name">💧 Moisture & Water (Keeps Dry & Crisp)</span>
+                  <span id="barrier-moisture" class="barrier-tag tag-high">High</span>
+                </div>
+                <div class="barrier-card">
+                  <span class="barrier-name">💨 Air & Smell (Stops Spoiling & Odor)</span>
+                  <span id="barrier-oxygen" class="barrier-tag tag-high">High</span>
+                </div>
+                <div class="barrier-card">
+                  <span class="barrier-name">☀️ Sunlight & Heat (Stops Oil Going Bad)</span>
+                  <span id="barrier-light" class="barrier-tag tag-medium">Medium</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Alternative Options (Two Alternatives) -->
+            <div class="alternatives-grid">
+              <div class="alt-card">
+                <div class="alt-header">
+                  <span class="alt-icon">💰</span>
+                  <span class="alt-title">Low-Cost Option (Cheaper)</span>
+                </div>
+                <p id="recom-low-cost" class="alt-body">--</p>
+              </div>
+
+              <div class="alt-card">
+                <div class="alt-header">
+                  <span class="alt-icon">🌱</span>
+                  <span class="alt-title">Eco-Friendly Option (Recyclable)</span>
+                </div>
+                <p id="recom-sustainable" class="alt-body">--</p>
+              </div>
+            </div>
+
+            <!-- Assumptions and Limitations Notice -->
+            <div class="assumptions-box">
+              <h4 class="assumptions-title">⚠️ Practical Packing Tips & Storage Advice</h4>
+              <ul id="recom-assumptions" class="assumptions-list">
+                <!-- Dynamically populated -->
+              </ul>
+              <p class="disclaimer-note">
+                <strong>Important Note for Producers:</strong> These are practical packaging guidelines based on typical food properties. Before large commercial sales, always test with a small batch to ensure your heat sealer gives an airtight seal.
+              </p>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- Chat Consultation Section -->
+        <section class="card chat-card" aria-labelledby="chat-heading">
+          <div class="card-header flex-between">
+            <div>
+              <h2 id="chat-heading" class="card-title">3. Packaging Assistant Chat</h2>
+              <p class="card-description">Ask follow-up questions about sealing, pouch types, suppliers, or costs.</p>
+            </div>
+            <button type="button" id="clear-chat-btn" class="btn-secondary btn-small" title="Clear chat history">🗑️ Clear Chat</button>
+          </div>
+
+          <!-- Chat Messages Container -->
+          <div class="chat-messages-wrap" id="chat-messages-container">
+            <div class="chat-empty-hint" id="chat-empty-hint">
+              <span class="chat-hint-icon">💬</span>
+              <p>No messages yet. Ask questions like <em>"What type of heat sealer do I need for LDPE?"</em> or <em>"Is kraft paper with PLA lining waterproof?"</em></p>
+            </div>
+          </div>
+
+          <!-- Chat Typing Indicator -->
+          <div id="chat-typing-indicator" class="chat-typing-indicator hidden">
+            <span class="typing-dot"></span>
+            <span class="typing-dot"></span>
+            <span class="typing-dot"></span>
+            <span class="typing-text">WrapShield AI is thinking...</span>
+          </div>
+
+          <!-- Chat Input Form -->
+          <form id="chat-form" class="chat-form">
+            <input type="text" id="chat-input" class="chat-input" placeholder="Type your follow-up packaging question..." autocomplete="off" required>
+            <button type="submit" id="chat-send-btn" class="btn btn-primary btn-icon">
+              <span>Send</span>
+              <span class="send-arrow">➤</span>
+            </button>
+          </form>
+        </section>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <p>WrapShield AI Prototype &bull; Designed for Food Businesses &bull; Powered by Gemini AI</p>
+  </footer>
+
+  <!-- Application Logic -->
+  <script src="script.js"></script>
+</body>
+</html>
