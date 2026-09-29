@@ -3,6 +3,7 @@
 <img src="frontend/wrapshield-logo.jpg" alt="WrapShield AI Logo" width="120" style="border-radius: 50%;" />
 
 # WrapShield AI (PackSmart AI)
+
 ### 🛡️ Smart, Multimodal Food Packaging Recommendation & Advisory Engine
 
 [![SIH](https://img.shields.io/badge/Smart%20India%20Hackathon-SIH-orange?style=for-the-badge&logo=target)](https://www.sih.gov.in/)
@@ -11,7 +12,7 @@
 [![Gemini](https://img.shields.io/badge/Google%20Gemini-Multimodal%20AI-8E75B2?style=for-the-badge&logo=googlegemini&logoColor=white)](https://aistudio.google.com/)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](LICENSE)
 
-*Empowering rural farmers, artisanal food producers, SHGs, and small food enterprises with accessible, science-backed packaging intelligence.*
+_Empowering rural farmers, artisanal food producers, SHGs, and small food enterprises with accessible, science-backed packaging intelligence._
 
 ---
 
@@ -23,7 +24,7 @@
 
 ## 📌 Problem Overview
 
-Small-scale food producers, rural farming cooperatives, and home-based food businesses face significant financial losses due to **spoilage, moisture ingress, oxidation, and packaging failures**. Most producers cannot afford dedicated food-technology consultants or navigate complicated technical polymer terminology (such as *BOPP, EVOH, WVTR, OTR*).
+Small-scale food producers, rural farming cooperatives, and home-based food businesses face significant financial losses due to **spoilage, moisture ingress, oxidation, and packaging failures**. Most producers cannot afford dedicated food-technology consultants or navigate complicated technical polymer terminology (such as _BOPP, EVOH, WVTR, OTR_).
 
 **WrapShield AI** bridges this gap by translating complex food-preservation science into clear, actionable, and cost-effective packaging solutions using Google's multimodal **Gemini AI**.
 
@@ -35,7 +36,7 @@ Small-scale food producers, rural farming cooperatives, and home-based food busi
 - **📦 Comprehensive Packaging Recommendations**:
   - **Material & Structure Breakdown**: Visual descriptions with trade names (e.g., Kraft paper + Met-PET barrier) and layer-by-layer structure (outer strength, core barrier, food-contact heat seal).
   - **Barrier Protection Matrix**: High / Medium / Low ratings for **Moisture**, **Oxygen**, and **Light** vulnerability.
-  - **Scientific Spoilage Context**: Explains exactly *why* the food spoils and how the packaging prevents degradation.
+  - **Scientific Spoilage Context**: Explains exactly _why_ the food spoils and how the packaging prevents degradation.
 - **💰 Budget & Sustainable Alternatives**:
   - **Low-Cost Wholesale Option**: Readily accessible materials for tight budgets and local markets.
   - **Eco-Friendly Alternative**: 100% recyclable (Mono-PE) or compostable/biodegradable options.
@@ -51,7 +52,7 @@ Small-scale food producers, rural farming cooperatives, and home-based food busi
 graph TD
     A[User / Small Producer] -->|Upload Photo & Specify Constraints| B[Responsive Frontend UI]
     B -->|REST API / Multipart Form| C[Flask Application Server]
-    
+
     subgraph Backend Engine
         C --> D[Image Preprocessor & Validator]
         D --> E[Gemini Service with Auto-Failover]
@@ -151,6 +152,7 @@ python app.py
 ```
 
 The application will be live at:
+
 - **Web Interface:** [http://127.0.0.1:5000/](http://127.0.0.1:5000/)
 - **Health Check:** [http://127.0.0.1:5000/api/health](http://127.0.0.1:5000/api/health)
 
@@ -159,10 +161,12 @@ The application will be live at:
 ## 🔌 API Reference
 
 ### 1. Health Check
+
 `GET /api/health`
 Checks server status and whether Gemini API key is configured.
 
 **Response:**
+
 ```json
 {
   "status": "ok",
@@ -173,6 +177,7 @@ Checks server status and whether Gemini API key is configured.
 ```
 
 ### 2. Analyze Food Packaging
+
 `POST /api/analyze`
 Accepts `multipart/form-data` with product information and optional photo.
 
@@ -186,13 +191,15 @@ Accepts `multipart/form-data` with product information and optional photo.
 | `transport_condition`| Text | Optional | Courier, local distribution, export |
 | `budget_priority` | Text | Optional | Economy, Balanced, Premium |
 
-*\* At least one of `food_name` or `image` must be supplied.*
+_\* At least one of `food_name` or `image` must be supplied._
 
 ### 3. Interactive Packaging Chat
+
 `POST /api/chat`
 Ask questions regarding recommendations, equipment, or preservation.
 
 **Request Payload:**
+
 ```json
 {
   "message": "What sealing machine should I buy for this foil pouch?",
@@ -205,13 +212,13 @@ Ask questions regarding recommendations, equipment, or preservation.
 
 ## 🛠️ Tech Stack
 
-| Domain | Technology | Purpose |
-| :--- | :--- | :--- |
-| **Backend** | Python 3, Flask, Flask-CORS | Lightweight REST API server & routing |
-| **Generative AI** | Google Gemini (2.5-Flash, 2.0-Flash) | Multimodal visual recognition & recommendation synthesis |
-| **Resilience** | Custom Multi-Model Fallback Pool | High-availability fallback handling rate limits & 503 errors |
-| **Frontend** | Vanilla HTML5, CSS3, JavaScript (ES6+) | Blazing fast, zero-dependency responsive client dashboard |
-| **Design & UX** | Custom Card Design, Micro-Interactions | Simple, accessible interface for non-technical users |
+| Domain            | Technology                             | Purpose                                                      |
+| :---------------- | :------------------------------------- | :----------------------------------------------------------- |
+| **Backend**       | Python 3, Flask, Flask-CORS            | Lightweight REST API server & routing                        |
+| **Generative AI** | Google Gemini (2.5-Flash, 2.0-Flash)   | Multimodal visual recognition & recommendation synthesis     |
+| **Resilience**    | Custom Multi-Model Fallback Pool       | High-availability fallback handling rate limits & 503 errors |
+| **Frontend**      | Vanilla HTML5, CSS3, JavaScript (ES6+) | Blazing fast, zero-dependency responsive client dashboard    |
+| **Design & UX**   | Custom Card Design, Micro-Interactions | Simple, accessible interface for non-technical users         |
 
 ---
 
