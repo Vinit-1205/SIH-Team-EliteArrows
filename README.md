@@ -224,7 +224,7 @@ Ask questions regarding recommendations, equipment, or preservation.
 
 ## 👥 Team EliteArrows
 
-Developed with ❤️ for **Smart India Hackathon (SIH)**.
+Developed for **Smart India Hackathon (SIH)**.
 
 - **Vinit** ([@Vinit-1205](https://github.com/Vinit-1205))
 - Team EliteArrows Members & Contributors
